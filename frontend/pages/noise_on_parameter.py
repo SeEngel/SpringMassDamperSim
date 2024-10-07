@@ -4,41 +4,7 @@ import pandas as pd
 import requests
 import time
 import matplotlib.pyplot as plt
-
-def simulate_with_noise_on_params(m, c, k, f_0, w_F, t_span, z_0, z_1, t_eval, noise_level=0.1, N=10):
-    samples = []
-    for _ in range(N):
-        noisy_params = {
-            "m": np.random.normal(m, noise_level * 0.1 * abs(m)),
-            "c": np.random.normal(c, noise_level * 0.1 * abs(c)),
-            "k": np.random.normal(k, noise_level * 0.1 * abs(k)),
-            "f_0": np.random.normal(f_0, noise_level * 0.1 * abs(f_0)),
-            "w_F": np.random.normal(w_F, noise_level * 0.1 * abs(w_F)),
-            "t_span": t_span,
-            "z_0": z_0,
-            "z_1": z_1,
-            "t_eval": t_eval
-        }
-        response = requests.post("http://localhost:8000/simulate", json=noisy_params)
-        task_id = response.json()["task_id"]
-        
-        status = "processing"
-        while status == "processing":
-            result_response = requests.get(f"http://localhost:8000/result/{task_id}")
-            result = result_response.json()
-            status = result["status"]
-            if status == "processing":
-                time.sleep(1)
-        
-        if status == "completed":
-            result = result["result"]
-            t = result["t"]
-            z = np.array(result["z"])
-            samples.append(z)
-        else:
-            raise Exception(result["message"])
-    
-    return t, samples
+from utils import simulate_with_noise_on_params
 
 # Input fields for parameters
 m = st.number_input("Mass of the system (m)", value=1.0)
@@ -71,7 +37,7 @@ params = {
 
 # Simulate and display results
 if st.button("Run Simulation"):
-    t, samples = simulate_with_noise_on_params(**params, noise_level=noise_level, N=N)
+    t, samples, _ = simulate_with_noise_on_params(**params, noise_level=noise_level, N=N)
     
     # Erstelle einen DataFrame für alle Samples
     all_samples_df = pd.DataFrame(samples).T
