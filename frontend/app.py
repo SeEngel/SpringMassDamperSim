@@ -17,9 +17,22 @@ def start_fastapi_service():
 
 start_fastapi_service()
 
+st.markdown("# Simulation of Spring-Mass-Damper System")
+st.markdown("""
+```python
+m (dzdt)^2 + c dzdt + k*z = f_0 * cos(w_F t)
+dzdt(0) = z_1
+z(0) = z_0
+```
+""")
+
 # Navigation
 st.sidebar.title("Navigation")
-page = st.sidebar.radio("Go to", ["Spring-Mass-Damper System Simulation", "Noise on Displacement", "Noise on parameters", "Noise on parameters reconstruction"])
+page = st.sidebar.radio("Go to", ["Spring-Mass-Damper System Simulation", 
+                                  "Noise on Displacement", 
+                                  "Noise on parameters", 
+                                  "Noise on Displacement reconstruction",
+                                  "Noise on Parameter reconstruction"])
 
 if page == "Spring-Mass-Damper System Simulation":
     # Streamlit app layout
@@ -99,11 +112,16 @@ elif page == "Noise on Displacement":
     exec(open(path_experiments).read())
 elif page == "Noise on parameters reconstruction":
     # Load the experiment page
-    st.title("Noise on Parameters reconstruction Page")
+    st.title("Noise on Displacement reconstruction Page")
     path_experiments = os.path.join(os.path.dirname(__file__), "pages/noise_on_displacement_statistics.py")
     exec(open(path_experiments).read())
 elif page == "Noise on parameters":
     # Load the experiment page
     st.title("Noise on Parameters Page")
     path_experiments = os.path.join(os.path.dirname(__file__), "pages/noise_on_parameter.py")
+    exec(open(path_experiments).read())
+elif page == "Noise on Displacement reconstruction":
+    # Load the experiment page
+    st.title("Noise on Displacement reconstruction Page")
+    path_experiments = os.path.join(os.path.dirname(__file__), "pages/noise_on_parameter_statistics.py")
     exec(open(path_experiments).read())

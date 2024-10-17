@@ -15,60 +15,18 @@ m (dzdt)^2 + c dzdt + k*z = f_0 * cos(w_F t)
 dzdt(0) = z_1
 z(0) = z_0
 
-simulation = z+noise
+simulation = z(parameter+noise)
 
 IE(XGBoost(simulation)->parameters) -> parameters
 ```
 """)
 st.markdown("""
-This page simulates a system with noise on the displacement (Y = y + gauss-noise) and displays the results.
+This page simulates a system with noise on the parameters simulation = z(parameter+noise).
 XGBoost is used to train from randomized parameters (labels) and corresponding displacement solutions (features).
-Then, tne trained XGBoost model is taken as a prediction model to be considered on the displacement added with Gaussian noise simlated before, to calculate the parameters for each sample.
-This will be statistically presented, and the mean is taken to be compared to the true parameter displacement curves.
+Then, the trained XGBoost model is taken as a prediction model to be considered on the noised parameter simulations before, to calculate the parameters for each sample.
+This will be statistically presented, and the mean is taken to be compared to the true parameters.
 """)
 
-
-def simulate_with_noise(m, c, k, f_0, w_F, t_span, z_0, z_1, t_eval, noise_level=0.1, N=10):
-    # Parameter an Backend senden
-    params = {
-        "m": m,
-        "c": c,
-        "k": k,
-        "f_0": f_0,
-        "w_F": w_F,
-        "t_span": t_span,
-        "z_0": z_0,
-        "z_1": z_1,
-        "t_eval": t_eval
-    }
-    response = requests.post("http://localhost:8000/simulate", json=params)
-    task_id = response.json()["task_id"]
-    
-    # Polling für Ergebnisse
-    status = "processing"
-    while status == "processing":
-        result_response = requests.get(f"http://localhost:8000/result/{task_id}")
-        result = result_response.json()
-        status = result["status"]
-        if status == "processing":
-            time.sleep(1)
-    
-    # Ergebnisse anzeigen
-    if status == "completed":
-        result = result["result"]
-        t = result["t"]
-        z = np.array(result["z"])
-        
-        # Rauschen hinzufügen
-        samples = []
-        noise = np.random.normal(0, noise_level, size=(N, z.shape[0]))  # Rauschpegel anpassen
-        for i in range(N):
-            noisy_z = z + noise[i]
-            samples.append(noisy_z)
-        
-        return t, samples
-    else:
-        raise Exception(result["message"])
 
 # Input fields for parameters
 m = st.number_input("Mass of the system (m)", value=1.0)
@@ -100,12 +58,10 @@ params = {
     't_eval': t_eval
 }
 
-# Simulate and display results
-import matplotlib.pyplot as plt
 
 # Simulate and display results
 if st.button("Run Simulation"):
-    t, samples = simulate_with_noise(**params, noise_level=noise_level, N=N)
+    t, samples, noisy_params_list = simulate_with_noise_on_params(**params, noise_level=noise_level, N=N)
     
     # Erstelle einen DataFrame für alle Samples
     all_samples_df = pd.DataFrame(samples).T

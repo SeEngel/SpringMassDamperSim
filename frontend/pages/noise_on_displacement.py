@@ -6,6 +6,17 @@ import time
 import matplotlib.pyplot as plt
 
 
+st.markdown("# Simulation with Noise on Displacement")
+st.markdown("""
+```python
+m (dzdt)^2 + c dzdt + k*z = f_0 * cos(w_F t)
+dzdt(0) = z_1
+z(0) = z_0
+
+simulation = z+noise
+```
+""")
+
 def simulate_with_noise(m, c, k, f_0, w_F, t_span, z_0, z_1, t_eval, noise_level=0.1, N=10):
     # Parameter an Backend senden
     params = {
@@ -77,8 +88,7 @@ params = {
     't_eval': t_eval
 }
 
-# Simulate and display results
-import matplotlib.pyplot as plt
+
 
 # Simulate and display results
 if st.button("Run Simulation"):

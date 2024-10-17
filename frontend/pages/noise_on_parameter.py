@@ -6,6 +6,18 @@ import time
 import matplotlib.pyplot as plt
 from utils import simulate_with_noise_on_params
 
+
+st.markdown("# Simulation with Noise on Parameters")
+st.markdown("""
+```python
+(m+noise) (dzdt)^2 + (c+noise) dzdt + (k+noise)*z = (f_0+noise) * cos((w_F+noise) t)
+dzdt(0) = (z_1+noise)
+z(0) = (z_0+noise)
+
+simulation = z(parameter+noise)
+```
+""")
+
 # Input fields for parameters
 m = st.number_input("Mass of the system (m)", value=1.0)
 c = st.number_input("Damping parameter (c)", value=0.5)
