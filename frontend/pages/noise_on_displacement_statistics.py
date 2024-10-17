@@ -18,6 +18,15 @@ z(0) = z_0
 simulation = z+noise
 
 IE(XGBoost(simulation)->parameters) -> parameters
+
+Noise model:
+
+samples = []
+noise = np.random.normal(0, noise_level, size=(N, z.shape[0]))  # Rauschpegel anpassen
+for i in range(N):
+    noisy_z = z + noise[i]
+    samples.append(noisy_z)
+
 ```
 """)
 st.markdown("""

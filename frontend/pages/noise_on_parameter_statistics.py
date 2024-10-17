@@ -18,6 +18,21 @@ z(0) = z_0
 simulation = z(parameter+noise)
 
 IE(XGBoost(simulation)->parameters) -> parameters
+
+Noise model:
+
+noisy_params = {
+    "m": np.random.normal(m, noise_level * 0.1 * abs(m)),
+    "c": np.random.normal(c, noise_level * 0.1 * abs(c)),
+    "k": np.random.normal(k, noise_level * 0.1 * abs(k)),
+    "f_0": np.random.normal(f_0, noise_level * 0.1 * abs(f_0)),
+    "w_F": np.random.normal(w_F, noise_level * 0.1 * abs(w_F)),
+    "t_span": t_span,
+    "z_0": np.random.normal(w_F, noise_level * 0.1 * abs(z_0)),
+    "z_1": np.random.normal(w_F, noise_level * 0.1 * abs(z_1)),
+    "t_eval": t_eval
+}
+
 ```
 """)
 st.markdown("""
